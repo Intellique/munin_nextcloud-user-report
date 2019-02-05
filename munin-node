@@ -1,4 +1,4 @@
 # insert into /etc/munin/plugin-conf.d/munin-node
-[nxur]
+[nxur*]
 user www-data
 group www-data
