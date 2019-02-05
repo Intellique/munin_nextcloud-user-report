@@ -1,0 +1,100 @@
+#!/usr/bin/perl
+
+use v5.14;
+use warnings;
+use English;
+use Munin::Plugin;
+
+=head1 NAME
+
+nxur - NextCloud user report module
+
+=head1 CONFIGURATION
+
+This plugin must run as the same user as the webserver.
+insert into /etc/munin/plugin-conf.d/munin-node:
+
+[nxur*]
+user www-data
+group www-data
+
+Default mode displays per user quota usage. To display absolute storage use per
+NextCloud user, name the link nxur_abs
+
+ln -s /usr/share/munin/plugins/nxur \
+	/etc/munin/plugins/nxur_abs
+
+=head1 AUTHOR
+
+Intellique dev team <dev@intellique.com>
+Copyright (c) 2019 Intellique
+
+=LICENSE
+
+GPLv3
+
+=cut
+
+#%# family=auto
+#%# capabilities=autoconf
+
+my $nxcommand = "/var/www/nextcloud/occ";
+my $nxuser    = "www-data";
+my $abs       = $0 =~ m/_abs/ ? 1 : 0;
+
+if ( $ARGV[0] and $ARGV[0] eq "autoconf" ) {
+    if ( -x $nxcommand ) {
+        print "yes\n";
+        exit 0;
+    } else {
+        print "no\n";
+        exit 1;
+    }
+}
+
+if ( $ARGV[0] and $ARGV[0] eq "config" ) {
+
+    print qq(graph_title NextCloud Users Usage Report\ngraph_category nextcloud\n);
+
+    if ($abs) {
+        print qq(graph_args --base 1024 -l 0\ngraph_vlabel Storage consumption\n)
+
+    } else {
+        print qq(graph_info Users without quota show at 50%\ngraph_args --base 1000 -l 0 --upper-limit 100\ngraph_vlabel Percent Used\n);
+    }
+
+    if ( -x $nxcommand ) {
+        my @cmdout = qx($nxcommand user:list)
+          or die "Failed to execute \"$nxcommand\"";
+        foreach my $line (@cmdout) {
+            my ($user) = ( $line =~ m(^\s+\-\s(\w+)\:) );
+            print "$user.label $user\n";
+        }
+
+    }
+    exit 0;
+}
+
+if ( -x $nxcommand ) {
+    my @cmdout = qx($nxcommand  usage-report:generate)
+      or die "Failed to execute \"$nxcommand\"";
+
+    foreach my $line (@cmdout) {
+        my ( $user, $quota, $usage ) =
+          ( $line =~ m(^"(\w+)","[^d+]+.*",(\-?\d+),(\d+)) );
+        my $percent;
+        if ( $quota < -1 ) {
+            $percent = 50;
+        } else {
+            $percent = int( $usage / ( $quota / 100 ) );
+        }
+
+        my $humanusage = scaleNumber( $usage, 'B', 0 );
+        if ($abs) {
+            print "$user.value $usage\n";
+        } else {
+            print "$user.value $percent\n";
+        }
+    }
+}
+
