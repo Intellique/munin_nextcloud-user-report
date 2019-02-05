@@ -7,29 +7,30 @@ use Munin::Plugin;
 
 =head1 NAME
 
-nxur - NextCloud user report module
+nxur - NextCloud user report Munin module
 
 =head1 CONFIGURATION
 
 This plugin must run as the same user as the webserver.
 insert into /etc/munin/plugin-conf.d/munin-node:
 
-[nxur*]
-user www-data
-group www-data
+	[nxur*]
+	user www-data
+	group www-data
 
 Default mode displays per user quota usage. To display absolute storage use per
 NextCloud user, name the link nxur_abs
 
-ln -s /usr/share/munin/plugins/nxur \
-	/etc/munin/plugins/nxur_abs
+	ln -s /usr/share/munin/plugins/nxur \
+		/etc/munin/plugins/nxur_abs
 
 =head1 AUTHOR
 
 Intellique dev team <dev@intellique.com>
+
 Copyright (c) 2019 Intellique
 
-=LICENSE
+=head1 LICENSE
 
 GPLv3
 
@@ -53,13 +54,12 @@ if ( $ARGV[0] and $ARGV[0] eq "autoconf" ) {
 }
 
 if ( $ARGV[0] and $ARGV[0] eq "config" ) {
-
-    print qq(graph_title NextCloud Users Usage Report\ngraph_category nextcloud\n);
-
     if ($abs) {
+	    print qq(graph_title NextCloud Users Quota Usage Report\ngraph_category nextcloud\n);
         print qq(graph_args --base 1024 -l 0\ngraph_vlabel Storage consumption\n)
 
     } else {
+	    print qq(graph_title NextCloud Users Disk Usage Report\ngraph_category nextcloud\n);
         print qq(graph_info Users without quota show at 50%\ngraph_args --base 1000 -l 0 --upper-limit 100\ngraph_vlabel Percent Used\n);
     }
 
