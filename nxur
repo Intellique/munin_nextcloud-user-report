@@ -55,11 +55,11 @@ if ( $ARGV[0] and $ARGV[0] eq "autoconf" ) {
 
 if ( $ARGV[0] and $ARGV[0] eq "config" ) {
     if ($abs) {
-	    print qq(graph_title NextCloud Users Quota Usage Report\ngraph_category nextcloud\n);
+	    print qq(graph_title NextCloud Users Disk Usage Report\ngraph_category nextcloud\n);
         print qq(graph_args --base 1024 -l 0\ngraph_vlabel Storage consumption\n)
 
     } else {
-	    print qq(graph_title NextCloud Users Disk Usage Report\ngraph_category nextcloud\n);
+	    print qq(graph_title NextCloud Users Quota Usage Report\ngraph_category nextcloud\n);
         print qq(graph_info Users without quota show at 50%\ngraph_args --base 1000 -l 0 --upper-limit 100\ngraph_vlabel Percent Used\n);
     }
 
