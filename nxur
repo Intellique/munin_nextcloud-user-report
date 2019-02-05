@@ -8,6 +8,7 @@ use Munin::Plugin;
 =head1 NAME
 
 nxur - NextCloud user report Munin module
+
 This is a munin plugin used to monitor NextCloud Users storage consumption. 
 
 =head1 CONFIGURATION
