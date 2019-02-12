@@ -72,6 +72,8 @@ if ( $ARGV[0] and $ARGV[0] eq "config" ) {
           or die "Failed to execute \"$nxcommand\"";
         foreach my $line (@cmdout) {
             my ($user) = ( $line =~ m(^\s+\-\s(.+)\:) );
+			#sanitize @
+			$user = s/@/AT/g;
             print "$user.label $user\n";
         }
 
@@ -86,6 +88,7 @@ if ( -x $nxcommand ) {
     foreach my $line (@cmdout) {
         my ( $user, $quota, $usage ) =
           ( $line =~ m(^"(.+)","[^d+]+.*",(\-?\d+),(\-?\d+),) );
+		$user = s/@/AT/g;
         my $percent;
         if ( $quota < -1 ) {
             $percent = 50;
