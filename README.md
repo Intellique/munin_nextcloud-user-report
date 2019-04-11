@@ -21,6 +21,16 @@ user, name the link nxur\_abs
         ln -s /usr/share/munin/plugins/nxur \
                 /etc/munin/plugins/nxur_abs
 
+# SCREENSHOTS
+
+Here are two screenshots of the absolute space consumption view and the quota usage view.
+Users that never logged are listed with "-2" absolute space.
+Users without any defined quota are always at 50% quota usage.
+
+![storage usage](https://wazoox.github.io/abs.jpg)
+
+![quota usage](https://wazoox.github.io/quota.jpg)
+
 # AUTHOR
 
 Intellique dev team <dev@intellique.com>
